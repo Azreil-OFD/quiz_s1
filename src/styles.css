@@ -1,0 +1,8 @@
+@font-face {
+  font-family: AGCooperCyr;
+  src: url("./assets/fonts/AGCooperCyr.woff") format("woff");
+}
+
+main {
+  font-family: AGCooperCyr;
+}
