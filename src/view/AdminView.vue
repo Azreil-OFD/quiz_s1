@@ -14,7 +14,8 @@
           aria-controls="contact" aria-selected="false">Статистика</button>
       </li>
       <li class="nav-item" role="presentation">
-        <p class="btn" @click="router.push('/')"> Назад </p>
+        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" dasd
+          @click="router.push('/')"> Назад </button>
       </li>
     </ul>
     <editModalVue v-if="showModal" @close="showModal = false">
@@ -103,12 +104,12 @@
               <div class="card-footer bg-transparent border border-secondary"
                 style="display: flex; justify-content: space-evenly;">
                 <button class="btn btn-primary" v-if="el.id != 0" @click="upArr(data.data, el.id)">
-                  &lt Вперед </button>
+                  &lt&lt </button>
                 <button class="btn btn-danger" @click="deleteData(el.id)">удалить</button>
                 <button class="btn btn-secondary" @click="editMode(el.id)">изменить</button>
 
                 <button class="btn btn-primary" v-if="el.id !== data.data.length - 1" @click="downArr(data.data, el.id)">
-                  Назад &gt;
+                  &gt;&gt;
                 </button>
 
               </div>
