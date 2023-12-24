@@ -1,5 +1,4 @@
 <template>
-  <p style="position: absolute; left: 10px;top:10px" class="btn" @click="router.push('/')"> Назад </p>
   <div class="container">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li class="nav-item" role="presentation">
@@ -13,6 +12,9 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab"
           aria-controls="contact" aria-selected="false">Статистика</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <p class="btn" @click="router.push('/')"> Назад </p>
       </li>
     </ul>
     <editModalVue v-if="showModal" @close="showModal = false">
