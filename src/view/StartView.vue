@@ -1,11 +1,30 @@
 <script setup lang="ts">
 import { appWindow } from "@tauri-apps/api/window";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-
+import { readTextFile } from "@tauri-apps/api/fs";
 const router = useRouter();
-
+const data = ref({ data: [] })
 const full = ref(false);
+async function loadData(text: string) {
+  try {
+    const jsonData = await readTextFile(text);
+    return JSON.parse(jsonData);
+  } catch {
+    return [];
+  }
+}
+onMounted(async () => {
+  full.value = await appWindow.isFullscreen();
+
+})
+
+const setFull = async () => {
+  await appWindow.setFullscreen(true);
+  full.value = await appWindow.isFullscreen();
+}
+
+
 const getFull = async () => {
   full.value = await appWindow.isFullscreen();
   if (!full.value) {
@@ -14,11 +33,20 @@ const getFull = async () => {
 };
 
 const run = async () => {
-  full.value = await appWindow.isFullscreen();
-  if (full.value) {
-    router.push('/game');
-  } else {
-    alert(" Перейдите в полноэкранный режим")
+  router.push('/game');
+  return
+  data.value.data = await loadData('data.json')
+  if (data.value.data.length === 0) {
+    alert("База пустая.")
+    await appWindow.setFullscreen(false);
+  }
+  else {
+    full.value = await appWindow.isFullscreen();
+    if (full.value) {
+      
+    } else {
+      alert(" Перейдите в полноэкранный режим")
+    }
   }
 } 
 </script>
@@ -63,6 +91,9 @@ const run = async () => {
               </p>
             </div>
             <button class="start" @click="run()">Начать</button>
+            <button class="btn btn-secondary"
+              style="height: 7vh; width: 20vh; margin-top: 2vh; font-size: 1.9vh; font-family: 'Courier New', Courier, monospace;"
+              @click="setFull()" v-if="!full">Полноэкранный режим</button>
           </div>
         </div>
       </div>

@@ -88,7 +88,7 @@
           <button class="btn btn-danger m-2" @click="clearData()">Удалить все</button>
         </div>
         <div class="row">
-          <div class="col-sm-4" v-for="el in data.data">
+          <div v-if="data.data.length !== 0" class="col-sm-4" v-for="el in data.data">
             <div class="card border border-secondary mb-3" style="max-width: 40rem;">
               <div class="card-header bg-transparent border border-secondary"> Ворос {{ el.id + 1 }}: {{ el.title }}</div>
               <div class="card-body text-secondary">
@@ -115,7 +115,13 @@
               </div>
             </div>
           </div>
-
+          <div v-else>
+            <div class="card">
+              <div class="card-body">
+                Заданий нет. Перейдите во вкладку "Добавить"
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

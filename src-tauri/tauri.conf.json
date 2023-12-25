@@ -41,8 +41,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Викторина",
-        "width": 1024,
-        "height": 768,
+        "width": 1224,
+        "height": 868,
         "minWidth": 1024,
         "minHeight": 768
       }

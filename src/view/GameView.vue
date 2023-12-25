@@ -1,5 +1,6 @@
 <script setup lang="js">
 import { readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import { appWindow } from "@tauri-apps/api/window";
 import { onMounted, ref, toRaw } from "vue";
 import { useRouter } from "vue-router";
 
@@ -37,10 +38,6 @@ const currect_onj = ref({
 onMounted(
   async () => {
     data.value.data = await loadData('data.json')
-    if (data.value.data.length === 0) {
-      alert("База пустая.")
-      router.push('/')
-    }
     statistic.value = await loadData('statistic.json')
     currect_onj.value.id = data.value.data[0].id
     currect_onj.value.title = data.value.data[0].title
@@ -101,8 +98,10 @@ const next = (answer) => {
 
       <div class="content">
         <!-- Верхний блок с колесом фортуны -->
-        <img src="@/assets/img/koleso.svg" alt="" class="wheel-of-fortune" />
-        <img src="@/assets/img/strelka.svg" alt="" class="strlk" />
+        <div class="fortune">
+          <img src="@/assets/img/koleso.svg" alt="" class="wheel-of-fortune" />
+          <img src="@/assets/img/strelka.svg" alt="" class="strlk" />
+        </div>
 
         <!-- Блок с вопросом и вариантами ответов -->
         <div class="question-block">
@@ -110,10 +109,10 @@ const next = (answer) => {
             <h2>{{ currect_onj.title }}</h2>
           </div>
           <div class="options">
-            <button class="qButton btn1" @click="next(1)">{{ currect_onj.answers[1].text }}</button>
-            <button class="qButton btn2" @click="next(2)">{{ currect_onj.answers[2].text }}</button>
-            <button class="qButton btn3" @click="next(3)">{{ currect_onj.answers[3].text }}</button>
-            <button class="qButton btn4" @click="next(4)">{{ currect_onj.answers[4].text }}</button>
+            <button class="qButton btn1"  v-resize-text @click="next(1)">{{ currect_onj.answers[1].text }}</button>
+            <button  class="qButton btn2" v-resize-text @click="next(2)">{{ currect_onj.answers[2].text }}</button>
+            <button  class="qButton btn3" v-resize-text @click="next(3)">{{ currect_onj.answers[3].text }}</button>
+            <button  class="qButton btn4" v-resize-text="{ratio:1.3, minFontSize: '30px', maxFontSize: '100px', delay: 200}" @click="next(4)">{{ currect_onj.answers[4].text }}</button>
           </div>
         </div>
       </div>
@@ -132,6 +131,11 @@ main {
   background-repeat: no-repeat;
   /* Это предотвратит повторение фона */
   user-select: none;
+}
+
+.fortune {
+  position: absolute;
+  z-index: -100;
 }
 
 h1,
@@ -271,7 +275,7 @@ button {
   /* или другое относительное значение */
   position: absolute;
   top: 50%;
-  left: 40%;
+
   /* Измените отступ справа по вашему усмотрению */
   transform: translateY(-50%);
 }
