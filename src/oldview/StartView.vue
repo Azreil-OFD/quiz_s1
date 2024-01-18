@@ -16,7 +16,6 @@ async function loadData(text: string) {
 }
 onMounted(async () => {
   full.value = await appWindow.isFullscreen();
-
 })
 
 const setFull = async () => {

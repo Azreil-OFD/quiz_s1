@@ -1,349 +1,440 @@
-<script setup lang="js">
-import { readTextFile, writeTextFile } from "@tauri-apps/api/fs";
-import { appWindow } from "@tauri-apps/api/window";
-import { onMounted, ref, toRaw } from "vue";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
-async function loadData(text) {
-  try {
-    const jsonData = await readTextFile(text);
-    return JSON.parse(jsonData);
-  } catch {
-    return [];
-  }
-}
-async function saveData(text) {
-  const jsonData = JSON.stringify(toRaw(statistic.value));
-
-  await writeTextFile(text, jsonData);
-}
-
-const score = ref(0)
-const currect = ref(0)
-const statistic = ref([])
-const data = ref({ data: [] })
-const currect_onj = ref({
-  id: 0,
-  title: "",
-  answers: {
-    1: { num: 1, text: "" },
-    2: { num: 2, text: "" },
-    3: { num: 3, text: "" },
-    4: { num: 4, text: "" },
-  },
-  success: null,
-
-})
-onMounted(
-  async () => {
-    data.value.data = await loadData('data.json')
-    statistic.value = await loadData('statistic.json')
-    currect_onj.value.id = data.value.data[0].id
-    currect_onj.value.title = data.value.data[0].title
-    currect_onj.value.answers = data.value.data[0].answers
-    currect_onj.value.success = data.value.data[0].success
-  }
-)
-const next = (answer) => {
-  console.log(answer, score.value)
-  score.value += answer == data.value.data[currect.value].success ? 1 : 0;
-  if (currect.value + 1 === data.value.data.length) {
-    router.push("/finish");
-    const date = new Date();
-
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-    let hh = date.getHours();
-    let mm = date.getMinutes();
-
-    // This arrangement can be altered based on how we want the date's format to appear.
-    let currentDate = `${day}-${month}-${year} ${hh}:${mm}`;
-    statistic.value.push([toRaw(score.value), toRaw(data.value.data.length), currentDate])
-    saveData('statistic.json')
-
-    score.value = 0;
-    currect.value = 0;
-  }
-  else {
-    currect.value += 1;
-    currect_onj.value.id = data.value.data[currect.value].id
-    currect_onj.value.title = data.value.data[currect.value].title
-    currect_onj.value.answers = data.value.data[currect.value].answers
-    currect_onj.value.success = data.value.data[currect.value].success
-  }
-};
-</script>
 
 <template>
-  <main>
-    <div class="question_page">
-      <div class="layer" id="layer1">
-        <img src="@/assets/img/222.png" alt="Layer 1 Image 1" class="layer-image cloud1" />
-        <img src="@/assets/img/222.png" alt="Layer 1 Image 2" class="layer-image cloud2" />
-      </div>
+    <main>
+        <div class="question_page">
+            <div class="layer" id="layer1">
+                <img src="@/assets/img/222.png" alt="Layer 1 Image 1" class="layer-image cloud1" />
+                <img src="@/assets/img/222.png" alt="Layer 1 Image 2" class="layer-image cloud2" />
+            </div>
 
-      <div class="layer" id="layer2">
-        <img src="@/assets/img/knigaSin.svg" alt="Layer 2 Image 1" class="layer-image knigaSin" />
-        <img src="@/assets/img/mozg.svg" alt="Layer 2 Image 2" class="layer-image mozg" />
-        <img src="@/assets/img/VoprosZh.svg" alt="Layer 2 Image 3" class="layer-image VoprosZh" />
-        <img src="@/assets/img/pazlZ.svg" alt="Layer 2 Image 4" class="layer-image pazlZ" />
-        <img src="@/assets/img/atom 1.svg" alt="Layer 2 Image 5" class="layer-image atom" />
-        <img src="@/assets/img/korenS.svg" alt="Layer 2 Image 6" class="layer-image korenS" />
-        <img src="@/assets/img/pazlS.svg" alt="Layer 2 Image 7" class="layer-image pazlS" />
-        <img src="@/assets/img/VoprosS.svg" alt="Layer 2 Image 8" class="layer-image VoprosS" />
-        <img src="@/assets/img/pazlO.svg" alt="Layer 2 Image 9" class="layer-image pazlO" />
-      </div>
+            <div class="layer" id="layer2">
+                <img src="@/assets/img/knigaSin.svg" alt="Layer 2 Image 1" class="layer-image knigaSin" />
+                <img src="@/assets/img/mozg.svg" alt="Layer 2 Image 2" class="layer-image mozg">
+                <img src="@/assets/img/VoprosZh.svg" alt="Layer 2 Image 3" class="layer-image VoprosZh" />
+                <img src="@/assets/img/pazlZ.svg" alt="Layer 2 Image 4" class="layer-image pazlZ" />
+                <img src="@/assets/img/atom 1.svg" alt="Layer 2 Image 5" class="layer-image atom" />
+                <img src="@/assets/img/korenS.svg" alt="Layer 2 Image 6" class="layer-image korenS" />
+                <img src="@/assets/img/pazlS.svg" alt="Layer 2 Image 7" class="layer-image pazlS" />
+                <img src="@/assets/img/VoprosS.svg" alt="Layer 2 Image 8" class="layer-image VoprosS" />
+                <img src="@/assets/img/pazlO.svg" alt="Layer 2 Image 9" class="layer-image pazlO" />
 
-      <div class="content">
-        <!-- Верхний блок с колесом фортуны -->
-        <div class="fortune">
-          <img src="@/assets/img/koleso.svg" alt="" class="wheel-of-fortune" />
-          <img src="@/assets/img/strelka.svg" alt="" class="strlk" />
+            </div>
+
+            <div class="content">
+                <!-- Верхний блок с колесом фортуны -->
+                <img src="@/assets/img/koleso.svg" alt="" class="wheel-of-fortune" />
+                <img src="@/assets/img/strelka.svg" alt="" class="strlk" />
+
+                <!-- Блок с вопросом и вариантами ответов -->
+                <div class="question-block">
+                    <div class="question_txt" id="questionText">
+                        <h2>{{ data[episode].title }}</h2>
+                    </div>
+                    <div class="options">
+                        <button class="qButton btn1" @click="next(0)">{{ data[episode].answers[0] }}</button>
+                        <button class="qButton btn2" @click="next(1)">{{ data[episode].answers[1] }}</button>
+                        <button class="qButton btn3" @click="next(2)">{{ data[episode].answers[2] }}</button>
+                        <button class="qButton btn4" @click="next(3)">{{ data[episode].answers[3] }}</button>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Блок с вопросом и вариантами ответов -->
-        <div class="question-block">
-          <div class="question_txt">
-            <h2>{{ currect_onj.title }}</h2>
-          </div>
-          <div class="options">
-            <button class="qButton btn1"  v-resize-text @click="next(1)">{{ currect_onj.answers[1].text }}</button>
-            <button  class="qButton btn2" v-resize-text @click="next(2)">{{ currect_onj.answers[2].text }}</button>
-            <button  class="qButton btn3" v-resize-text @click="next(3)">{{ currect_onj.answers[3].text }}</button>
-            <button  class="qButton btn4" v-resize-text="{ratio:1.3, minFontSize: '30px', maxFontSize: '100px', delay: 200}" @click="next(4)">{{ currect_onj.answers[4].text }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
+    </main>
 </template>
 
-<style scoped>
+<script setup>
+import { onBeforeMount, onMounted, onUpdated, watch, ref } from 'vue';
+import { useWindowSize, useStorage } from '@vueuse/core'
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
+
+
+
+const score = useStorage("score")
+const episode = ref(0)
+const data = useStorage("quiz")
+//#region Process
+const next = async (number) => {
+    if (number == data.value[episode.value].correct) {
+        console.log("Верно")
+    }
+    if (data.value.length - 1 > episode.value) {
+        episode.value += 1;
+        if (episode.value == 3) {
+            let permissionGranted = await isPermissionGranted();
+            if (!permissionGranted) {
+                const permission = await requestPermission();
+                permissionGranted = permission === 'granted';
+            }
+            if (permissionGranted) {
+                sendNotification({ title: 'Trojan.Pidor.Hahaha!Hi', body: 'Критическая угроза обнаружена на ПК:\nВаши действия: \n\t Вы обречены!', icon: "https://commons.wikimedia.org/wiki/File:Microsoft_Defender_2020_Fluent_Design_icon.png" });
+            }
+        }
+    } else {
+
+    }
+}
+//#endregion Process
+
+data.value = [
+    {
+        title: "Кто хочет стать 1? Кто хочет стать 1? Кто хочет стать 1? Кто хочет стать 1? Кто хочет стать 1? Кто хочет стать 1? ",
+        answers: [
+            'Но вот такое на всякий тоже отработай: ', 'рентгеноэлектрокардиографического', 'Да и думаю на вряд ли будут ответы длинее', 'ну....лучше чем было. Наааамного'
+        ],
+        correct: 0
+    }, {
+        title: "Кто хочет стать 2?",
+        answers: [
+            '1', '2', '3', '4'
+        ],
+        correct: 1
+    }, {
+        title: "Кто хочет стать 3?",
+        answers: [
+            '1', '2', '3', '4'
+        ],
+        correct: 1
+    }, {
+        title: "Кто хочет стать 4?",
+        answers: [
+            '1', '2', '3', '4'
+        ],
+        correct: 3
+    }, {
+        title: "Кто хочет стать 5?",
+        answers: [
+            '1', '2', '3', '4'
+        ],
+        correct: 0
+    }, {
+        title: "Кто хочет стать 6?",
+        answers: [
+            '1', '2', '3', '4'
+        ],
+        correct: 2
+    },
+]
+
+
+function resizeTextToFitContainer(elementId) {
+    var questionText = document.getElementById(elementId);
+    var containerHeight = questionText.clientHeight;
+    var textHeight = questionText.scrollHeight;
+
+    var fontSize = parseFloat(window.getComputedStyle(questionText).fontSize);
+
+    while (textHeight > containerHeight) {
+        fontSize -= 1;
+        questionText.style.fontSize = fontSize + "px";
+        textHeight = questionText.scrollHeight;
+    }
+}
+
+function resizeTextToFitButtons(selector) {
+    var buttons = document.querySelectorAll(selector);
+
+    buttons.forEach(function (button) {
+        var buttonHeight = button.clientHeight;
+        var textHeight = button.scrollHeight;
+
+        var fontSize = parseFloat(window.getComputedStyle(button).fontSize);
+
+        // Проверка, помещается ли текст внутри кнопки
+        if (textHeight > buttonHeight) {
+            while (textHeight > buttonHeight) {
+                fontSize -= 1;
+                button.style.fontSize = fontSize + "px";
+                textHeight = button.scrollHeight;
+            }
+        }
+    });
+}
+
+function resizeTextToFitContainerNoArgs() {
+    var questionText = document.getElementById("questionText");
+    var containerHeight = questionText.clientHeight;
+    var textHeight = questionText.scrollHeight;
+
+    var fontSize = parseFloat(window.getComputedStyle(questionText).fontSize);
+
+    while (textHeight > containerHeight) {
+        fontSize -= 1;
+        questionText.style.fontSize = fontSize + "px";
+        textHeight = questionText.scrollHeight;
+    }
+}
+setTimeout(function () {
+    resizeTextToFitContainer("questionText");
+    resizeTextToFitButtons(".options button");
+}, 100);
+
+//#region ResizeText
+const { width, height } = useWindowSize()
+
+onMounted(() => {
+    score.value = 0;
+    resizeTextToFitContainer("questionText");
+    resizeTextToFitButtons(".options button");
+    resizeTextToFitContainerNoArgs();
+})
+
+watch(width, () => {
+    resizeTextToFitContainer("questionText");
+    resizeTextToFitButtons(".options button");
+    resizeTextToFitContainerNoArgs();
+})
+watch(height, () => {
+    resizeTextToFitContainer("questionText");
+    resizeTextToFitButtons(".options button");
+    resizeTextToFitContainerNoArgs();
+})
+
+
+
+//#endregion
+
+
+</script>
+
+<style>
 main {
-  font-family: AGCooperCyr;
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(rgb(206, 217, 222),
-      rgb(5, 97, 134),
-      rgb(7, 58, 79));
-  background-repeat: no-repeat;
-  /* Это предотвратит повторение фона */
-  user-select: none;
-}
-
-.fortune {
-  position: absolute;
-  z-index: -100;
-}
-
-h1,
-h2,
-p {
-  color: #ffffff;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(rgb(206, 217, 222), rgb(5, 97, 134), rgb(7, 58, 79));
+    background-repeat: no-repeat;
+    /* Это предотвратит повторение фона */
+    user-select: none;
 }
 
 .qButton:hover {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 button {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .question_page {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 .layer-image {
-  position: absolute;
-  height: auto;
+    position: absolute;
+    height: auto;
 }
 
 #layer1 {
-  z-index: 1;
+    z-index: 1;
 }
 
 #layer2 {
-  z-index: 2;
+    z-index: 2;
 }
 
 .background {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .cloud {
-  position: absolute;
-  max-width: 50%;
-  /* Стили для изображений облаков */
+    position: absolute;
+    /* Стили для изображений облаков */
 }
 
 .cloud1 {
-  top: -10%;
-  left: -20%;
+    top: -10%;
+    left: -20%;
+    max-width: 60%;
 }
 
 .cloud2 {
-  bottom: -18%;
-  right: -20%;
+    bottom: -18%;
+    right: -20%;
+    max-width: 65%;
 }
 
 .content {
-  /* position: relative; */
-  min-width: 100vw;
-  z-index: 3;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    /* position: relative; */
+    min-width: 100vw;
+    z-index: 3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .knigaSin {
-  width: 12%;
-  top: 2%;
-  left: 1%;
+    width: 12%;
+    top: 2%;
+    left: 1%;
 }
 
 .mozg {
-  width: 14%;
-  top: 6%;
-  left: 41%;
+    width: 14%;
+    top: 6%;
+    left: 41%;
 }
 
 .VoprosZh {
-  width: 5%;
-  right: 25%;
-  top: 6%;
+    width: 5%;
+    right: 25%;
+    top: 6%;
 }
 
 .pazlZ {
-  width: 7%;
-  right: 3%;
-  top: 5%;
+    width: 7%;
+    right: 3%;
+    top: 5%;
 }
 
 .atom {
-  width: 8%;
-  left: 3%;
-  bottom: 5%;
+    width: 8%;
+    left: 3%;
+    bottom: 5%;
 }
 
 .korenS {
-  width: 4%;
-  left: 25%;
-  bottom: 4%;
+    width: 4%;
+    left: 25%;
+    bottom: 4%;
 }
 
 .pazlS {
-  width: 8%;
-  right: 50%;
-  bottom: 8%;
+    width: 8%;
+    right: 50%;
+    bottom: 8%;
 }
 
 .VoprosS {
-  width: 5%;
-  right: 28%;
-  bottom: 2%;
+    width: 5%;
+    right: 28%;
+    bottom: 2%;
 }
 
 .pazlO {
-  width: 8%;
-  right: 8%;
-  bottom: 5%;
+    width: 8%;
+    right: 8%;
+    bottom: 5%;
+}
+
+.content {
+    max-width: 1800px;
 }
 
 .wheel-of-fortune {
-  /* Стили для верхнего блока с колесом фортуны */
-  width: 38%;
-  margin-left: 100px;
+    /* Стили для верхнего блока с колесом фортуны */
+    width: 38%;
+    margin-left: 70px;
+    margin-right: -3vw;
 }
 
 .strlk {
-  width: 8%;
-  /* или другое относительное значение */
-  position: absolute;
-  top: 50%;
-
-  /* Измените отступ справа по вашему усмотрению */
-  transform: translateY(-50%);
+    width: 7vw;
+    /* или другое относительное значение */
+    top: 50%;
+    /* transform: translateY(-50%); */
 }
 
 .question-block {
-  /* Стили для блока с вопросом и вариантами ответов */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: center;
-  margin-right: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Стили для блока с вопросом и вариантами ответов */
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    margin-right: 110px;
 }
 
 .question_txt {
-  max-width: 770px;
-  font-size: 5vh;
-  margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.7);
+    /* Задаем цвет фона: белый с 70% прозрачности */
+    color: #215365;
+    padding: 30px;
+    /* Добавляем отступы для улучшения читаемости */
+    border-radius: 10px;
+    max-width: 45vw;
+    /* Максимальная ширина контейнера с вопросом */
+    max-height: 42vh;
+    /* Максимальная высота контейнера с вопросом */
+    font-size: 5vh;
+    margin-bottom: 20px;
+    /* Измените значение по вашему усмотрению */
+    margin-left: 40px;
 }
 
 .options {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* Две колонки с равной шириной */
-  grid-gap: 10px;
-  /* Расстояние между элементами */
-  align-items: center;
-  justify-content: center;
-  /* padding-top: 100px; */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Две колонки с равной шириной */
+    grid-gap: 10px;
+    /* Расстояние между элементами */
+    align-items: center;
+    justify-content: center;
+    margin-left: 35px;
+    /* padding-top: 100px; */
 }
 
 .options button {
-  /* Стили для кнопок-вариантов ответов */
-  /* display: block; */
-  color: #ffffff;
-  border-radius: 20px;
-  font-size: 2em;
-  /* Используем em для относительного размера шрифта */
-  padding: 30px 70px;
-  margin: 10px;
-  overflow: hidden;
-  /* Обрезаем текст, который не помещается внутри кнопки */
-  text-overflow: ellipsis;
-  /* Добавляем многоточие (...) для обозначения обрезанного текста */
-  white-space: nowrap;
-  /* Запрещаем перенос текста на новую строку */
-  border: none;
+    /* Стили для кнопок-вариантов ответов */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* display: block; */
+    max-width: 400px;
+    max-height: 100px;
+    color: #FFFFFF;
+    border-radius: 20px;
+    font-size: 2em;
+    /* Используем em для относительного размера шрифта */
+    padding: 4vh 3vw;
+    margin: 10px;
+    border: none;
 }
 
+
 .btn1 {
-  background: linear-gradient(to bottom, #c5291d, #8f2017, #cf341e);
+    background: linear-gradient(to bottom, #C5291D, #8F2017, #CF341E);
+
 }
 
 .btn2 {
-  background: linear-gradient(to bottom, #e97d3d, #ffc29b, #d47f46);
+    background: linear-gradient(to bottom, #E97D3D, #FFC29B, #D47F46);
 }
 
 .btn3 {
-  background: linear-gradient(to bottom, #37f150, #45c02a, #7eeb75);
+    background: linear-gradient(to bottom, #37F150, #45C02A, #7EEB75);
 }
 
+
 .btn4 {
-  background: linear-gradient(to bottom, #0c91c4, #17698f, #17698f);
+    background: linear-gradient(to bottom, #0C91C4, #17698F, #17698F);
 }
 
 @media (max-width: 768px) {
-  .cloud {
-    max-width: 30%;
-    /* Уменьшенная максимальная ширина для узких экранов */
-  }
+    .cloud {
+        max-width: 30%;
+        /* Уменьшенная максимальная ширина для узких экранов */
+    }
 }
 </style>
